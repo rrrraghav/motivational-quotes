@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+    <h1>About</h1>
+    <p>We believe that it is extremely important to maintain good mental health. To help you with that, we will email you motivational quotes every morning to give you a good start to the day.</p>
+    <p>To sign up for the mailing list,
+        <a href="{{ url_for('mailing_list') }}">click here</a>
+    </p>
+{% endblock %}
