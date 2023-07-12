@@ -4,7 +4,7 @@ import smtplib
 
 import requests
 from bs4 import BeautifulSoup
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_bootstrap import Bootstrap5  # pip install Bootstrap-Flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -52,6 +52,10 @@ def about():
 @app.route('/signup', methods=['GET', 'POST'])
 def mailing_list():
     form = EmailForm()
+    if form.validate_on_submit():
+        user_email = request.form['Email']
+        print(user_email)
+        return redirect(url_for('home'))
     return render_template('form.html', form=form)
 
 
