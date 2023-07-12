@@ -5,11 +5,22 @@ import smtplib
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, render_template
+from flask_bootstrap import Bootstrap5  # pip install Bootstrap-Flask
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 
 my_email = os.environ['EMAIL']
 email_password = os.environ['PASSWORD']
 app = Flask(__name__)
-# app.config['SECRET_KEY'] = os.environ['SECRETKEY']
+app.config['SECRET_KEY'] = os.environ['SECRETKEY']
+bootstrap = Bootstrap5(app)
+
+
+class EmailForm(FlaskForm):
+    email = StringField(name='Email', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
 
 random_page_num = random.randint(1, 100)
 URL = f'https://www.goodreads.com/quotes/tag/motivational?page={random_page_num}'
@@ -38,16 +49,10 @@ def about():
     return render_template('about.html')
 
 
-@app.route('/')
+@app.route('/signup', methods=['GET', 'POST'])
 def mailing_list():
-    return render_template('form.html')
-
-
-with smtplib.SMTP('smtp.gmail.com', port=587) as connection:
-    connection.starttls()
-    connection.login(user=my_email, password=email_password)
-    connection.sendmail(from_addr=my_email, to_addrs='coding1email@yahoo.com',
-                        msg=f'Subject: Quote of the Day\n\n{quote} - {author}'.encode())
+    form = EmailForm()
+    return render_template('form.html', form=form)
 
 
 if __name__ == '__main__':
