@@ -1,10 +1,5 @@
 import os
-import random
 import smtplib
-
-import requests
-import sqlalchemy
-from bs4 import BeautifulSoup
 from flask import Flask, render_template, request, redirect, url_for
 from flask_bootstrap import Bootstrap5  # pip install Bootstrap-Flask
 from flask_wtf import FlaskForm
@@ -13,6 +8,8 @@ from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, String, Integer, create_engine
 from sqlalchemy.orm import Session
+
+from data_manager import DataManager
 
 my_email = os.environ['EMAIL']
 email_password = os.environ['PASSWORD']
@@ -43,21 +40,9 @@ class UserData(db.Model):
 with app.app_context():
     db.create_all()
 
-random_page_num = random.randint(1, 100)
-URL = f'https://www.goodreads.com/quotes/tag/motivational?page={random_page_num}'
-
-response = requests.get(URL)
-site = response.text
-soup = BeautifulSoup(site, 'html.parser')
-
-quotes = soup.find_all(name='div', class_='quoteText')
-quote_list = [quote.get_text().strip().split('\n')[0] for quote in quotes]
-authors = soup.find_all(name='span', class_='authorOrTitle')
-author_list = [author.get_text().strip().title().split(',')[0] for author in authors]
-
-quote = random.choice(quote_list)
-index = quote_list.index(quote)
-author = author_list[index]
+data_manager = DataManager()
+quote = data_manager.get_quote()
+author = data_manager.get_author()
 
 
 @app.route('/')
@@ -74,16 +59,14 @@ def about():
 def mailing_list():
     form = EmailForm()
     if form.validate_on_submit():
+        db.session.close_all()  # TODO: still doesnt work
         first_name = request.form['First Name']
         last_name = request.form['Last Name']
         user_email = request.form['Email']
         with app.app_context():
             new_customer = UserData(fn=first_name, ln=last_name, email=user_email)
-            try:
-                db.session.add(new_customer)
-                db.session.commit()
-            except sqlalchemy.exc.OperationalError: # need to fix this still
-                db.session.close_all()
+            db.session.add(new_customer)
+            db.session.commit()
         return redirect(url_for('home'))
     return render_template('form.html', form=form)
 
