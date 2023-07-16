@@ -1,25 +1,16 @@
 import os
-import smtplib
+import pandas
 from flask import Flask, render_template, request, redirect, url_for
 from flask_bootstrap import Bootstrap5  # pip install Bootstrap-Flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, Integer, create_engine
-from sqlalchemy.orm import Session
 
 from data_manager import DataManager
+from email_manager import EmailManager
 
-my_email = os.environ['EMAIL']
-email_password = os.environ['PASSWORD']
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SECRETKEY']
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///customer-data.db"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-engine = create_engine('sqlite:///customer-data.db')
-session = Session(engine)
-db = SQLAlchemy(app)
 bootstrap = Bootstrap5(app)
 
 
@@ -30,19 +21,11 @@ class EmailForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class UserData(db.Model):
-    id = Column(Integer, primary_key=True)
-    fn = Column(String, nullable=False)
-    ln = Column(String, nullable=False)
-    email = Column(String, nullable=False)
-
-
-with app.app_context():
-    db.create_all()
-
 data_manager = DataManager()
 quote = data_manager.get_quote()
 author = data_manager.get_author()
+
+email_manager = EmailManager()
 
 
 @app.route('/')
@@ -59,21 +42,22 @@ def about():
 def mailing_list():
     form = EmailForm()
     if form.validate_on_submit():
-        db.session.close_all()  # TODO: still doesnt work
-        first_name = request.form['First Name']
-        last_name = request.form['Last Name']
+        first_name = request.form['First Name'].title()
+        last_name = request.form['Last Name'].title()
         user_email = request.form['Email']
-        with app.app_context():
-            new_customer = UserData(fn=first_name, ln=last_name, email=user_email)
-            db.session.add(new_customer)
-            db.session.commit()
+        user_data = f'\n{first_name},{last_name},{user_email}'
+        with open('customer-data.csv', mode='a') as file:
+            file.write(user_data)
         return redirect(url_for('home'))
     return render_template('form.html', form=form)
 
 
-with app.app_context():
-    result = db.session.execute(db.select(UserData))
-    all_users = result.scalars()
+user_info = pandas.read_csv('customer-data.csv')
+email_list = user_info['email']
+for email in email_list:
+    row = user_info[user_info.email == email]
+    name = row.fn
+    email_manager.send_email(email, quote, author, name)
 
 if __name__ == '__main__':
     app.run(debug=True)
