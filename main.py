@@ -56,7 +56,7 @@ user_info = pandas.read_csv('customer-data.csv')
 email_list = user_info['email']
 for email in email_list:
     row = user_info[user_info.email == email]
-    name = row.fn
+    name = str(row.fn).split('    ')[1].split('\n')[0]
     email_manager.send_email(email, quote, author, name)
 
 if __name__ == '__main__':
