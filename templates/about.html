@@ -2,9 +2,40 @@
 {% block title %}About{% endblock %}
 
 {% block content %}
-    <h1>About</h1>
-    <p>We believe that it is extremely important to maintain good mental health. To help you with that, we will email you motivational quotes every morning to give you a good start to the day.</p>
-    <p>To sign up for the mailing list,
-        <a href="{{ url_for('mailing_list') }}">click here</a>
-    </p>
+    <div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="https://th.bing.com/th/id/OIP.yLPtiUKNKs3B7x5WGdZKBgHaEo?w=279&h=180&c=7&r=0&o=5&dpr=2.5&pid=1.7" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+      </div>
+      <div class="col-lg-6">
+        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">About Us</h1>
+        <p class="lead">We believe that maintaining good mental health is of paramount importance. So, to help our customers achieve mental sanctity, we will send an email every morning containing a motivational quote.</p>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          <a href="{{ url_for('mailing_list') }}">
+              <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Sign Up!</button>
+          </a>
+          <a href="{{ url_for('home') }}">
+              <button type="button" class="btn btn-outline-dark btn-lg px-4">Go Home</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="container">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-sunrise" viewBox="0 0 16 16">
+  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l1.5 1.5a.5.5 0 0 1-.708.708L8.5 2.707V4.5a.5.5 0 0 1-1 0V2.707l-.646.647a.5.5 0 1 1-.708-.708l1.5-1.5zM2.343 4.343a.5.5 0 0 1 .707 0l1.414 1.414a.5.5 0 0 1-.707.707L2.343 5.05a.5.5 0 0 1 0-.707zm11.314 0a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zM8 7a3 3 0 0 1 2.599 4.5H5.4A3 3 0 0 1 8 7zm3.71 4.5a4 4 0 1 0-7.418 0H.499a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1h-3.79zM0 10a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 10zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+</svg>
+      </a>
+    </div>
+
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+      <li class="ms-3"><a class="text-body-secondary" href="{{ url_for('home') }}">Home</a></li>
+      <li class="ms-3"><a class="text-body-secondary" href="{{ url_for('about') }}">About</a></li>
+      <li class="ms-3"><a class="text-body-secondary" href="{{ url_for('mailing_list') }}">Sign Up</a></li>
+    </ul>
+  </footer>
+</div>
 {% endblock %}
