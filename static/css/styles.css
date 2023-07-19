@@ -14,11 +14,11 @@
 
 .b-example-divider-form {
     width: 0%;
-    height: 4.05rem;
+    height: 5.55rem;
 }
 
 body {
-    background-color: #DAA520;
+    background-color: #e6c566;
 }
 
 .btn-primary {
@@ -48,4 +48,12 @@ a {
 
 .nav {
     --bs-nav-link-hover-color: black;
+}
+
+.col-md-8 {
+    width: 100%;
+}
+
+.form-control {
+    width: 75%
 }
