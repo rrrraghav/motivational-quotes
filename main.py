@@ -1,11 +1,11 @@
 import os
 import pandas
+from datetime import datetime as dt
 from flask import Flask, render_template, request, redirect, url_for
 from flask_bootstrap import Bootstrap5  # pip install Bootstrap-Flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-
 from data_manager import DataManager
 from email_manager import EmailManager
 
@@ -27,6 +27,9 @@ author = data_manager.get_author()
 
 email_manager = EmailManager()
 
+time = dt.now().time().strftime('%H%M')
+print(time)
+
 
 @app.route('/')
 def home():
@@ -45,19 +48,19 @@ def mailing_list():
         first_name = request.form['First Name'].title()
         last_name = request.form['Last Name'].title()
         user_email = request.form['Email']
-        user_data = f'\n{first_name},{last_name},{user_email}'
+        user_info = f'\n{first_name},{last_name},{user_email}'
         with open('customer-data.csv', mode='a') as file:
-            file.write(user_data)
+            file.write(user_info)
         return redirect(url_for('home'))
     return render_template('form.html', form=form)
 
 
-user_info = pandas.read_csv('customer-data.csv')
-email_list = user_info['email']
-for email in email_list:
-    row = user_info[user_info.email == email]
-    name = str(row.fn).split('    ')[1].split('\n')[0]
-    email_manager.send_email(email, quote, author, name)
+if time == '0700':
+    user_data = pandas.read_csv('customer-data.csv')
+    email_list = user_data['email']
+    for email in email_list:
+        row = user_data[user_data.email == email]
+        name = str(row.fn).split('    ')[1].split('\n')[0]
+        email_manager.send_email(email, quote, author, name)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+app.run()
